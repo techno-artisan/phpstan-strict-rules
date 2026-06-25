@@ -1,0 +1,40 @@
+{
+    "name": "techno-artisan/phpstan-strict-rules",
+    "description": "Additional strict rules for PHPStan.",
+    "type": "phpstan-extension",
+    "keywords": ["phpstan", "static analysis", "rules", "strict"],
+    "license": "MIT",
+    "require": {
+        "php": "^8.5",
+        "phpstan/phpstan": "^2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12"
+    },
+    "autoload": {
+        "psr-4": {
+            "TechnoArtisan\\PhpstanStrictRules\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TechnoArtisan\\PhpstanStrictRules\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "rules.neon"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "phpstan": "phpstan analyse"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

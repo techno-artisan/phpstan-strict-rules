@@ -1,0 +1,2 @@
+rules:
+    - TechnoArtisan\PhpstanStrictRules\Rules\DisallowEmptyConstructRule

@@ -26,6 +26,7 @@ includes:
 | ---- | ----------- |
 | `DisallowEmptyConstructRule` | Reports use of the `empty()` language construct; use an explicit strict comparison instead. |
 | `TypedClassConstantRule` | Reports class constants declared without a native type; add an explicit type (e.g. `const int FOO = 1;`). |
+| `DisallowLooseInArrayRule` | Reports `in_array()`, `array_search()` and `array_keys()` calls that do not pass `true` as the `$strict` argument; loose comparison hides bugs. |
 
 ## License
 

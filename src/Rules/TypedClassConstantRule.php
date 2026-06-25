@@ -32,7 +32,11 @@ final class TypedClassConstantRule implements Rule
             return [];
         }
 
-        $className = $scope->getClassReflection()?->getName() ?? 'unknown-class';
+        $classReflection = $scope->getClassReflection();
+        if ($classReflection === null) {
+            throw new ShouldNotHappenException();
+        }
+        $className = $classReflection->getName();
 
         $errors = [];
 
@@ -42,8 +46,8 @@ final class TypedClassConstantRule implements Rule
                 $className,
                 $const->name->toString(),
             ))
-                ->identifier('typedClassConstant.missingNativeType')
-                ->line($const->getLine())
+                ->identifier('technoArtisan.typedClassConstant')
+                ->line($const->getStartLine())
                 ->build();
         }
 

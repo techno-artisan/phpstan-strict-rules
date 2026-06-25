@@ -1,3 +1,4 @@
 rules:
     - TechnoArtisan\PhpstanStrictRules\Rules\DisallowEmptyConstructRule
     - TechnoArtisan\PhpstanStrictRules\Rules\TypedClassConstantRule
+    - TechnoArtisan\PhpstanStrictRules\Rules\DisallowLooseInArrayRule

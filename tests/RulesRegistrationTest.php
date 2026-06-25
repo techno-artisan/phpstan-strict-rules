@@ -7,6 +7,7 @@ namespace TechnoArtisan\PhpstanStrictRules\Tests;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\PHPStanTestCase;
 use TechnoArtisan\PhpstanStrictRules\Rules\DisallowEmptyConstructRule;
+use TechnoArtisan\PhpstanStrictRules\Rules\DisallowLooseInArrayRule;
 use TechnoArtisan\PhpstanStrictRules\Rules\TypedClassConstantRule;
 
 /**
@@ -32,5 +33,6 @@ final class RulesRegistrationTest extends PHPStanTestCase
 
         self::assertContains(DisallowEmptyConstructRule::class, $registered);
         self::assertContains(TypedClassConstantRule::class, $registered);
+        self::assertContains(DisallowLooseInArrayRule::class, $registered);
     }
 }

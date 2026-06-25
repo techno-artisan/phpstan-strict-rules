@@ -85,6 +85,6 @@ PHP 8.5 and Composer are available locally and `vendor/` is installed, so `compo
 ## Conventions for working here
 - Always ignore `.idea/` (PhpStorm).
 - **Commits:** Commit messages in **English** and meaningful (imperative mood). As the author, use exclusively
-  the Git identity of this repo (Björn or a colleague/friend). **No** meta-references to AI,
+  the repo's Git identity `Techno Artisan <github@technoartisan.dj>` (set in the local git config). **No** meta-references to AI,
   Claude, or Anthropic — i.e. no `Co-Authored-By`, "Generated with", or session/tool lines.
 - New design/spec documents go to `docs/superpowers/specs/`.

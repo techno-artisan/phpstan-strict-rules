@@ -70,7 +70,6 @@ final class DisallowLooseInArrayRule implements Rule
             return [];
         }
 
-        /** @var list<Arg> $args */
         $args = array_values($node->getArgs());
 
         // Argument unpacking (...$args) — positional layout cannot be trusted.

@@ -34,10 +34,12 @@ function flagged(mixed $x, array $list, array $arr, Haystack $haystack, bool $fl
     array_search($x, $list);             // strict missing
     array_keys($arr, $x);                // search value present, strict missing
     array_keys($arr, filter_value: $x);  // search value present (named), strict missing
+    \in_array($x, $list);                // fully-qualified call, strict missing
 
     // --- negative cases: must NOT be reported ---
     in_array($x, $list, true);           // strict true
     in_array($x, $list, strict: true);   // named strict true
+    in_array($x, $list, TRUE);           // strict TRUE — case-insensitive boolean literal, OK
     array_search($x, $list, true);       // strict true
     array_keys($arr);                    // no search value, strict irrelevant
     array_keys($arr, $x, true);          // strict true

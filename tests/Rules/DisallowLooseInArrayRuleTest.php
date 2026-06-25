@@ -20,9 +20,9 @@ final class DisallowLooseInArrayRuleTest extends RuleTestCase
 
     public function testEveryLooseCallIsReportedAndNothingElse(): void
     {
-        // analyse() asserts the COMPLETE error set: the eight loose calls are
+        // analyse() asserts the COMPLETE error set: the nine loose calls are
         // flagged, and every negative case (strict: true, array_keys($arr), the
-        // first-class callable, the ...$args unpacking, the Haystack::in_array()
+        // first-class callable, the ...$args unpacking, the $haystack->in_array()
         // method call) is implicitly asserted to stay clean.
         $this->analyse([__DIR__ . '/data/loose-in-array.php'], [
             [self::message('in_array'), 29],
@@ -33,6 +33,7 @@ final class DisallowLooseInArrayRuleTest extends RuleTestCase
             [self::message('array_search'), 34],
             [self::message('array_keys'), 35],
             [self::message('array_keys'), 36],
+            [self::message('in_array'), 37],
         ]);
     }
 
@@ -40,7 +41,7 @@ final class DisallowLooseInArrayRuleTest extends RuleTestCase
     {
         $errors = $this->gatherAnalyserErrors([__DIR__ . '/data/loose-in-array.php']);
 
-        self::assertCount(8, $errors);
+        self::assertCount(9, $errors);
         foreach ($errors as $error) {
             self::assertSame('technoArtisan.looseInArray', $error->getIdentifier());
         }

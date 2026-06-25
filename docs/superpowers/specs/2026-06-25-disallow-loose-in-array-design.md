@@ -116,8 +116,6 @@ File: `src/Rules/DisallowLooseInArrayRule.php`
 - Error identifier: `technoArtisan.looseInArray` (camelCase convention).
 - Error message names the function, e.g.:
   `Call to in_array() must pass true as the $strict argument; loose comparison coerces types and hides bugs.`
-- `->tip('Pass true as the $strict argument to compare strictly.')` for actionable
-  guidance.
 
 ## Registration
 

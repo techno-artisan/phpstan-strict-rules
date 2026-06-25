@@ -62,6 +62,29 @@ contract — if they pass locally they pass in CI.
 
 ## Note
 
-PHP/Composer are not installed in the current environment, so the scaffold (one example rule
-`DisallowEmptyConstructRule` + its test) has **not** been executed here. Run `composer install`
-before relying on `composer test` / `composer phpstan`.
+PHP 8.5 and Composer are available locally and `vendor/` is installed, so `composer test` and
+`composer phpstan` run here and both pass. The package ships two rules
+(`DisallowEmptyConstructRule` and `TypedClassConstantRule`), each covered by a `RuleTestCase`.
+
+### Sub-agent model selection (unless the user requests a specific model)
+- Trivial → simple tasks: **Haiku**
+- Medium → complex tasks: **Sonnet**
+- More complex → very complex tasks: **Opus**
+
+### Transparency: skills & agents
+- Before a task, briefly state which skills are loaded and why.
+- Before starting a sub-agent, state: which agent, which skills it has loaded (confirmation of correctness), and which tools it is allowed to use.
+- Before starting a sub-agent, Claude always explains:
+  - Which sub-agent (name/role).
+  - Which skills the sub-agent has loaded, and asks whether these are correct.
+  - Which tools it is allowed to use (if relevant).
+    Example:
+> 🤖 Sub-agent: `api-developer`  
+> 📚 Skills: `api-conventions`, `error-handling-patterns`  
+> 🔧 Tools: Read, Write, Bash
+## Conventions for working here
+- Always ignore `.idea/` (PhpStorm).
+- **Commits:** Commit messages in **English** and meaningful (imperative mood). As the author, use exclusively
+  the Git identity of this repo (Björn or a colleague/friend). **No** meta-references to AI,
+  Claude, or Anthropic — i.e. no `Co-Authored-By`, "Generated with", or session/tool lines.
+- New design/spec documents go to `docs/superpowers/specs/`.

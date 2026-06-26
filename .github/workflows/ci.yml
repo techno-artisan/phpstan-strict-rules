@@ -10,23 +10,47 @@ permissions:
 
 jobs:
   tests:
-    name: Tests & static analysis
+    name: Tests & static analysis (PHPStan ${{ matrix.dependency-versions }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dependency-versions: [lowest, highest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: pcov
+      - uses: ramsey/composer-install@v4
+        with:
+          dependency-versions: ${{ matrix.dependency-versions }}
+      - run: composer phpstan
+      - run: composer test:coverage
+      - run: composer coverage:check
+
+  mutation:
+    name: Mutation testing (Infection)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: pcov
+      - uses: ramsey/composer-install@v4
+      - run: composer infection
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+  hygiene:
+    name: Hygiene (normalize, NEON lint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.5'
           coverage: none
-
-      - name: Install dependencies
-        uses: ramsey/composer-install@v4
-
-      - name: Static analysis (PHPStan)
-        run: composer phpstan
-
-      - name: Tests (PHPUnit)
-        run: composer test
+      - uses: ramsey/composer-install@v4
+      - run: composer validate --strict
+      - run: composer normalize:check
+      - run: composer lint:neon

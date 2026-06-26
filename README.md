@@ -135,10 +135,20 @@ over ignoring it.
 ## Development
 
 ```bash
-composer install   # install dependencies
-composer test      # run the PHPUnit suite
-composer phpstan   # run PHPStan on src/ — dogfoods this package's own rules
+composer install         # install dependencies
+composer test            # run the PHPUnit suite
+composer phpstan         # run PHPStan on src/ — dogfoods this package's own rules
+composer test:coverage   # run the suite and write coverage.xml
+composer coverage:check  # fail unless line coverage is 100%
+composer infection       # mutation testing — fail unless MSI is 100%
+composer lint:neon       # validate rules.neon and phpstan.neon
+composer normalize:check # fail unless composer.json is normalized
 ```
+
+This package is strict with itself: CI enforces **100 % line coverage** and a **100 %
+mutation score (MSI)**, runs the test suite against both the lowest and highest
+supported PHPStan `^2` release, and keeps `composer.json` normalized and the NEON
+config lint-clean.
 
 ## License
 

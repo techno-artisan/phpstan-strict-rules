@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **CI quality gates** — the build now runs three independent jobs: a `tests` matrix
+  against both the lowest and highest supported PHPStan `^2` release, an Infection
+  mutation-testing job gated at **MSI 100 %** and **covered-MSI 100 %**, and a
+  `hygiene` job (`composer validate`, `composer normalize` check, NEON lint).
+- **100 % line-coverage gate** via `bin/coverage-gate.php` and the new
+  `composer test:coverage` / `composer coverage:check` scripts.
+- **`composer normalize`** (`ergebnis/composer-normalize`) and a dedicated **NEON lint**
+  (`bin/neon-lint.php`, `composer lint:neon`) so a broken config is reported as such
+  instead of hiding inside a PHPStan analysis error.
+
 ## [0.1.0-beta.2] - 2026-06-26
 
 ### Added

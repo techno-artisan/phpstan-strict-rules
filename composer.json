@@ -1,16 +1,26 @@
 {
     "name": "techno-artisan/phpstan-strict-rules",
     "description": "Additional strict rules for PHPStan.",
-    "type": "phpstan-extension",
-    "keywords": ["phpstan", "static analysis", "rules", "strict"],
     "license": "MIT",
+    "type": "phpstan-extension",
+    "keywords": [
+        "phpstan",
+        "static analysis",
+        "rules",
+        "strict"
+    ],
     "require": {
         "php": "^8.5",
         "phpstan/phpstan": "^2"
     },
     "require-dev": {
+        "ergebnis/composer-normalize": "^2",
+        "infection/infection": "^0.29",
+        "nette/neon": "^3",
         "phpunit/phpunit": "^12"
     },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "TechnoArtisan\\PhpstanStrictRules\\": "src/"
@@ -21,6 +31,13 @@
             "TechnoArtisan\\PhpstanStrictRules\\Tests\\": "tests/"
         }
     },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "infection/extension-installer": true
+        },
+        "sort-packages": true
+    },
     "extra": {
         "phpstan": {
             "includes": [
@@ -29,12 +46,12 @@
         }
     },
     "scripts": {
+        "coverage:check": "@php bin/coverage-gate.php coverage.xml",
+        "infection": "infection --min-msi=100 --min-covered-msi=100 --threads=max --no-progress",
+        "lint:neon": "@php bin/neon-lint.php",
+        "normalize:check": "@composer normalize --dry-run --diff",
+        "phpstan": "phpstan analyse",
         "test": "phpunit",
-        "phpstan": "phpstan analyse"
-    },
-    "config": {
-        "sort-packages": true
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+        "test:coverage": "phpunit --coverage-clover=coverage.xml"
+    }
 }

@@ -3,13 +3,23 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/techno-artisan/phpstan-strict-rules.svg)](https://packagist.org/packages/techno-artisan/phpstan-strict-rules)
 [![Total Downloads](https://img.shields.io/packagist/dt/techno-artisan/phpstan-strict-rules.svg)](https://packagist.org/packages/techno-artisan/phpstan-strict-rules)
 [![PHP Version](https://img.shields.io/badge/php-%5E8.5-777bb4.svg)](https://www.php.net/)
-[![PHPStan](https://img.shields.io/badge/PHPStan-%5E2-2563eb.svg)](https://phpstan.org/)
+[![PHPStan](https://img.shields.io/badge/PHPStan-%5E2.2-2563eb.svg)](https://phpstan.org/)
 [![CI](https://github.com/techno-artisan/phpstan-strict-rules/actions/workflows/ci.yml/badge.svg)](https://github.com/techno-artisan/phpstan-strict-rules/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](#quality)
+[![Mutation MSI](https://img.shields.io/badge/MSI-100%25-brightgreen.svg)](#quality)
 [![License](https://img.shields.io/packagist/l/techno-artisan/phpstan-strict-rules.svg)](LICENSE)
 
 > **Uncompromising, purely-syntactic PHPStan rules — because loose semantics hide bugs.**
 
-A set of additional, deliberately strict rules for [PHPStan](https://phpstan.org/).
+A small set of additional, deliberately strict rules for [PHPStan](https://phpstan.org/).
+Every line below passes **vanilla PHPStan at `level: max`** — and is reported here:
+
+```php
+class Config { const TIMEOUT = 30; }     // ❌ technoArtisan.typedClassConstant
+if (empty($user)) { /* … */ }            // ❌ technoArtisan.disallowedEmpty
+if ($id == $request->id) { /* … */ }     // ❌ technoArtisan.looseComparison
+in_array('1', [1, 2, 3]);                // ❌ technoArtisan.looseInArray  (returns true!)
+```
 
 ## Why this package?
 
@@ -18,10 +28,44 @@ A set of additional, deliberately strict rules for [PHPStan](https://phpstan.org
 - **Uncompromising.** No configuration, no opt-outs: a construct is either allowed or
   it isn't.
 - **One thesis.** *Loose semantics hide bugs* — loose `empty()`, loose array searches
-  and loose `==` comparisons are all reported.
-- **Complements, doesn't replace.** Deliberately stricter than
-  [`phpstan/phpstan-strict-rules`](https://github.com/phpstan/phpstan-strict-rules),
-  which flags only *provably* type-unsafe comparisons. Use both together.
+  and loose `==` comparisons are all reported, alongside untyped class constants.
+- **Strict with itself.** Enforced in CI: 100 % line coverage, 100 % mutation score
+  (MSI), and the suite runs against both the *lowest* and *highest* supported PHPStan
+  `^2.2` release. A rule that isn't bulletproof doesn't ship. See [Quality](#quality).
+
+## Relationship to phpstan/phpstan-strict-rules
+
+[`phpstan/phpstan-strict-rules`](https://github.com/phpstan/phpstan-strict-rules) is
+broader and excellent — if you don't already use it, you probably should. Three of the
+four rules here overlap with rules it enables by default:
+
+| Construct | phpstan-strict-rules | this package |
+| --------- | -------------------- | ------------ |
+| `empty()` | bans all (`DisallowedEmptyRule`) | bans all |
+| `==` / `!=` / `<>` | bans all (`DisallowedLooseComparisonRule`) | bans all |
+| `in_array` / `array_search` / `array_keys` w/o `$strict` | type-aware, plus `base64_decode` (`StrictFunctionCallsRule`) | purely syntactic — requires the literal `true` |
+| Untyped class constants | — (no equivalent) | **`TypedClassConstantRule`** |
+
+What this package adds on top:
+
+- **`TypedClassConstantRule`** — strict-rules has no equivalent.
+- **A purely syntactic loose-array-search check.** Because it never consults inferred
+  types, it also flags `in_array($x, $list, $flag)` when `$flag` is only *inferred* to be
+  `true` — predictable, no guesswork. (strict-rules is type-aware and additionally covers
+  `base64_decode`.)
+
+The `empty()` and `==` rules are included so this package stands on its own. **If you run
+both packages, those two report the same lines twice** — disable them on one side:
+
+```neon
+# phpstan.neon — turn off the duplicates in phpstan-strict-rules
+parameters:
+    strictRules:
+        disallowedEmpty: false
+        disallowedLooseComparison: false
+```
+
+(or ignore the `technoArtisan.*` identifiers from this package instead).
 
 ## Installation
 
@@ -45,25 +89,10 @@ includes:
 
 | Rule | Reports | Identifier |
 | ---- | ------- | ---------- |
-| `DisallowEmptyConstructRule` | The `empty()` language construct | `technoArtisan.disallowedEmpty` |
 | `TypedClassConstantRule` | Class constants declared without a native type | `technoArtisan.typedClassConstant` |
+| `DisallowEmptyConstructRule` | The `empty()` language construct | `technoArtisan.disallowedEmpty` |
 | `DisallowLooseInArrayRule` | `in_array()` / `array_search()` / `array_keys()` without `$strict` | `technoArtisan.looseInArray` |
 | `DisallowLooseComparisonRule` | The `==`, `!=` and `<>` operators | `technoArtisan.looseComparison` |
-
-### Loose `empty()` — `DisallowEmptyConstructRule`
-
-`empty()` treats `0`, `0.0`, `"0"`, `""`, `[]`, `null` and `false` alike, so it
-silently swallows values you may care about. Use an explicit strict check.
-
-```php
-// ❌ reported
-if (empty($value)) {}
-
-// ✅ instead
-if ($value === null || $value === '') {}
-```
-
-Identifier: `technoArtisan.disallowedEmpty`
 
 ### Typed class constants — `TypedClassConstantRule`
 
@@ -84,6 +113,21 @@ final class Config
 ```
 
 Identifier: `technoArtisan.typedClassConstant`
+
+### Loose `empty()` — `DisallowEmptyConstructRule`
+
+`empty()` treats `0`, `0.0`, `"0"`, `""`, `[]`, `null` and `false` alike, so it
+silently swallows values you may care about. Use an explicit strict check.
+
+```php
+// ❌ reported
+if (empty($value)) {}
+
+// ✅ instead
+if ($value === null || $value === '') {}
+```
+
+Identifier: `technoArtisan.disallowedEmpty`
 
 ### Loose array search — `DisallowLooseInArrayRule`
 
@@ -130,7 +174,21 @@ over ignoring it.
 ## Requirements
 
 - PHP `^8.5`
-- PHPStan `^2`
+- PHPStan `^2.2`
+
+## Quality
+
+This package is strict with itself. Every release is gated in CI:
+
+- **100 % line coverage** of `src/`, enforced by `composer coverage:check`.
+- **100 % mutation score (MSI)** via [Infection](https://infection.github.io/) —
+  covered-MSI is 100 % too. A rule whose tests don't kill every mutant doesn't ship.
+- **lowest + highest matrix** — the suite runs against both the oldest and newest
+  supported PHPStan `^2.2` release, so the rules can't quietly break on either end.
+- **Config hygiene** — `composer.json` stays normalized and `rules.neon` / `phpstan.neon`
+  are lint-clean.
+
+These same gates run locally — see [Development](#development).
 
 ## Development
 
@@ -144,11 +202,6 @@ composer infection       # mutation testing — fail unless MSI is 100%
 composer lint:neon       # validate rules.neon and phpstan.neon
 composer normalize:check # fail unless composer.json is normalized
 ```
-
-This package is strict with itself: CI enforces **100 % line coverage** and a **100 %
-mutation score (MSI)**, runs the test suite against both the lowest and highest
-supported PHPStan `^2` release, and keeps `composer.json` normalized and the NEON
-config lint-clean.
 
 ## License
 

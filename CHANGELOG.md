@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Repositioned the README honestly relative to
+  [`phpstan/phpstan-strict-rules`](https://github.com/phpstan/phpstan-strict-rules).**
+  Three of the four rules overlap with rules that package enables by default — it bans
+  `empty()` and `==`/`!=` outright, and its `StrictFunctionCallsRule` covers the loose
+  array-search functions (type-aware, and additionally `base64_decode`). The README now
+  leads with the genuinely unique `TypedClassConstantRule`, adds a truthful
+  "Relationship to phpstan/phpstan-strict-rules" section (overlap map plus how to avoid
+  duplicate reports when running both), an at-a-glance example block, a dedicated
+  **Quality** section, and coverage / MSI badges.
+- Stated the PHPStan requirement and badge as `^2.2` (matching `composer.json`).
+
+### Fixed
+
+- **Corrected a factually wrong positioning claim** in the README. It previously stated
+  that `phpstan/phpstan-strict-rules` "flags only provably type-unsafe comparisons"; in
+  fact its `DisallowedLooseComparisonRule` bans every `==`/`!=` unconditionally, exactly
+  like this package.
+
 ## [0.1.0-beta.3] - 2026-06-26
 
 ### Added

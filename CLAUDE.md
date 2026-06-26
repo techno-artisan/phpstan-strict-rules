@@ -17,6 +17,19 @@ vendor/bin/phpunit --filter testEmptyConstructIsReported   # run a single test
 composer phpstan                       # run PHPStan on src/ — dogfoods this package's own rules
 ```
 
+### Local toolchain (Windows / ServBay)
+
+PHP and Composer run via ServBay; how to invoke them depends on the shell:
+
+- **Git Bash:** `php.cmd` and `composer.cmd` are on the PATH — use them directly
+  (e.g. `composer.cmd test`, `php.cmd vendor/bin/phpunit`). Bare `php` / `composer`
+  are **not** on the PATH and fail with `command not found` (exit 127); only the
+  `.cmd` form works. So the `composer …` commands above are `composer.cmd …` here.
+- **PowerShell:** neither form is on the PATH — use the full path
+  `F:/__ServBay/bin/php.cmd` / `F:/__ServBay/bin/composer.cmd`.
+
+Verified locally: `php.cmd --version` → PHP 8.5.3, `composer.cmd --version` → Composer 2.9.7.
+
 ## Architecture
 
 The whole package is a registration pipeline from a rule class to a consumer's PHPStan run:

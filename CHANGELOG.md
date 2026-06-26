@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`DisallowLooseComparisonRule`** — reports the loose comparison operators `==`,
+  `!=` and `<>` (the last parses to the same node as `!=`), so that loose comparison
+  can no longer silently coerce operand types and hide bugs (for example, `0 == 'foo'`,
+  `'1e1' == '10'` and `null == false` all evaluate to `true`). The rule is purely
+  syntactic and reports every loose comparison regardless of operand types — including
+  `== null` — which is deliberately stricter than `phpstan/phpstan-strict-rules`, that
+  flags only provably type-unsafe comparisons. Errors use the identifier
+  `technoArtisan.looseComparison`.
+
 ## [0.1.0-beta.1] - 2026-06-25
 
 ### Added

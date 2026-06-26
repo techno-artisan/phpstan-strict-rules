@@ -1,14 +1,14 @@
 # Ideenkatalog: Wertvollste nächste Ergänzungen für `techno-artisan/phpstan-strict-rules`
 
 > **Status:** Lebende Roadmap — teilweise umgesetzt (siehe Abschnitt 0)
-> **Datum:** 2026-06-25 23:10:06 · **aktualisiert:** 2026-06-26 (nach `v0.1.0-beta.2`)
-> **Stand des Pakets:** `0.1.0-beta.2`, vier Regeln
+> **Datum:** 2026-06-25 23:10:06 · **aktualisiert:** 2026-06-26 (nach `v0.1.0-beta.4`)
+> **Stand des Pakets:** `0.1.0-beta.4`, vier Regeln
 > **Zweck:** Strukturierte Sammlung und Bewertung möglicher technischer Ergänzungen,
 > als Grundlage für die Auswahl der nächsten Design-Spec.
 
 ---
 
-## 0. Umsetzungsstand (Stand `v0.1.0-beta.2`)
+## 0. Umsetzungsstand (Stand `v0.1.0-beta.4`)
 
 Seit der Erstfassung dieses Katalogs umgesetzt:
 
@@ -23,15 +23,59 @@ Seit der Erstfassung dieses Katalogs umgesetzt:
 - **✅ Doku (Teil von C3) — README-Überarbeitung** — Tagline, „Why this package?"-
   Positionierung ggü. `phpstan/phpstan-strict-rules`, Badges, Vorher/Nachher-Beispiel
   + Identifier je Regel, „Ignoring a rule", Requirements/Development.
-- **✅ C1 + C2 + C3 — Qualitäts-Infrastruktur** — umgesetzt (Design-Spec
-  `docs/superpowers/specs/2026-06-26-ci-quality-infrastructure-design.md`). CI-Matrix
-  PHPStan lowest/highest (C1), Infection mit MSI 100 % (C2), 100 % Line-Coverage-Gate +
-  `composer normalize` + NEON-Lint (C3). Schließt Lücke #3.
+- **✅ C1 + C2 + C3 — Qualitäts-Infrastruktur** — veröffentlicht in **`v0.1.0-beta.3`**
+  (Design-Spec `docs/superpowers/specs/2026-06-26-ci-quality-infrastructure-design.md`).
+  CI-Matrix PHPStan lowest/highest (C1), Infection mit MSI 100 % (C2), 100 % Line-
+  Coverage-Gate + `composer normalize` + NEON-Lint (C3). Schließt Lücke #3.
+- **✅ Ehrliche README-Neupositionierung** — **`v0.1.0-beta.4`**. Neue
+  „Relationship to phpstan/phpstan-strict-rules"-Sektion mit Overlap-Map; die README
+  führt nun mit der einzig eindeutig einzigartigen Regel (`TypedClassConstantRule`).
+  **Strategische Korrektur:** Die in diesem Katalog (u. a. A1, Abschnitt 6) noch tragende
+  These „rein syntaktisch = Differenzierungsmerkmal" wurde dabei als **faktisch falsch**
+  verworfen — Details in Abschnitt **0.1**.
 
 **Damit erledigt:** Lücken #1 (loser Vergleich), #2 (manuelle Selbst-Disziplin),
 #3 (CI-Matrix / Mutation-Tests / Coverage) und #4 (dünne Doku).
 
-**Nächste sinnvolle Schritte:** Risikoarme Regeln **A2** (`@`) und **A5** (leeres `catch`) zur Abrundung; **A4** (`switch`) nur bewusst als opt-in.
+**Nächste sinnvolle Schritte:** **zuerst** die in Abschnitt 0.1 beschriebene
+Positionierungsfrage klären. Die zuvor empfohlenen **A2** (`@`) und **A5** (leeres `catch`)
+bleiben attraktiv (kein Overlap mit `phpstan-strict-rules`), stehen aber bis dahin unter
+Vorbehalt; **A4** (`switch`) weiterhin nur als opt-in (siehe Abschnitt 5).
+
+---
+
+## 0.1 Strategische Neubewertung nach `v0.1.0-beta.4`
+
+`v0.1.0-beta.4` hat die Positionierung gegenüber
+[`phpstan/phpstan-strict-rules`](https://github.com/phpstan/phpstan-strict-rules) auf
+Faktenbasis korrigiert. Das berührt die **Begründungsgrundlage** dieses Katalogs, nicht
+den technischen Umsetzungsstand aus Abschnitt 0.
+
+**Overlap-Realität — drei der vier Regeln sind redundant:**
+
+| Konstrukt | `phpstan-strict-rules` | dieses Paket | Status |
+| --------- | ---------------------- | ------------ | ------ |
+| `empty()` | verbietet alle (`DisallowedEmptyRule`) | verbietet alle | **Overlap** |
+| `==` / `!=` / `<>` | verbietet alle (`DisallowedLooseComparisonRule`) | verbietet alle | **Overlap** |
+| loses `in_array`/`array_search`/`array_keys` | type-aware + `base64_decode` (`StrictFunctionCallsRule`) | rein syntaktisch (verlangt literal `true`) | **Overlap** (kleine Restdifferenz) |
+| untypisierte Klassenkonstanten | — (kein Äquivalent) | **`TypedClassConstantRule`** | **einzigartig** |
+
+**Folgen für die These dieses Katalogs:**
+
+- Die in **A1** und **Abschnitt 6** noch tragende Aussage — `phpstan-strict-rules` lasse
+  `==` zwischen gleichen Typen zu, weshalb die rein syntaktische Strenge das
+  **Differenzierungsmerkmal** sei — ist **faktisch falsch**: `DisallowedLooseComparisonRule`
+  verbietet `==`/`!=` ebenso kompromisslos, und beim `empty()`-Verbot gilt dasselbe.
+- Es bleibt nur eine schmale syntaktische Restdifferenz bei der Array-Such-Regel (sie
+  flaggt auch `in_array($x, $list, $flag)`, wenn `$flag` lediglich als `true` *inferiert*
+  ist) — ein Detail, kein tragfähiges Alleinstellungsmerkmal.
+- **Eindeutig einzigartig ist allein `TypedClassConstantRule`.**
+
+**Offene Produktfrage (zurückgestellt):** Sollen die drei redundanten Regeln überhaupt im
+Paket bleiben? Die README löst die Reibung vorerst pragmatisch (Anleitung, wie man die
+Doppel-Meldungen bei Parallelbetrieb beider Pakete abschaltet). Solange das nicht
+entschieden ist, ist „das strict-Regelset mit weiteren Verbots-Regeln abrunden" **keine
+unstrittige Default-Richtung** mehr — siehe die neu bewertete Roadmap in Abschnitt 5.
 
 ---
 
@@ -132,10 +176,12 @@ in_array(...) ... // bereits abgedeckt; der Operator selbst bisher nicht
   optionales `allowNullComparison`-Flag wäre denkbar, widerspräche aber dem
   bisherigen „keine End-Nutzer-Konfigurierbarkeit"-Prinzip (siehe Spec von
   `DisallowLooseInArrayRule`).
-- **Abgrenzung zu PHPStan-Bordmitteln:** `phpstan/phpstan-strict-rules` meldet
-  *typunsichere* lose Vergleiche, lässt aber `==` zwischen gleichen Typen zu. Diese
-  Regel ist bewusst **strenger und rein syntaktisch** — genau das Differenzierungs-
-  merkmal des Pakets. Im README klar herausstellen.
+- **Abgrenzung zu PHPStan-Bordmitteln:** ⚠️ *In `v0.1.0-beta.4` korrigiert (siehe
+  Abschnitt 0.1).* Die ursprüngliche Annahme — `phpstan/phpstan-strict-rules` lasse `==`
+  zwischen gleichen Typen zu, weshalb die rein syntaktische Strenge das
+  **Differenzierungsmerkmal** sei — ist **falsch**: dessen `DisallowedLooseComparisonRule`
+  verbietet `==`/`!=` ebenso kompromisslos. Diese Regel **überlappt** somit vollständig
+  und ist nur enthalten, damit das Paket allein lauffähig ist.
 - Yoda- vs. Nicht-Yoda-Schreibweise ist irrelevant (Operator-Knoten ist derselbe).
 
 **Bewertung:** Direktnutzen **Hoch** · Innovation **Mittel** · Aufwand **Niedrig** ·
@@ -366,7 +412,11 @@ Risiko **Niedrig** · Fit **Hoch** (passt zum Disziplin-Anspruch).
 > 2. ~~**B1** Meta-Architektur~~ — ✅ schlank umgesetzt (Reflection-Guard); Attribut +
 >    README-Codegen bewusst zurückgestellt (YAGNI bei vier Regeln).
 
-**C1, C2 und C3 sind umgesetzt.** Der Fokus liegt nun auf risikoarmen Regeln (A2, A5) zur Abrundung des „strict"-Regelsets.
+**C1, C2 und C3 sind umgesetzt.** Vorrangig ist nun jedoch nicht eine weitere Regel,
+sondern die in **Abschnitt 0.1** beschriebene Positionierungsfrage: drei der vier Regeln
+überlappen mit `phpstan-strict-rules`, eindeutig einzigartig ist nur `TypedClassConstantRule`.
+Zu klären ist die Paket-Identität (eigenständiges, teils redundantes „strict"-Set vs. Fokus
+auf nicht-abgedeckte Regeln), **bevor** das Regelset weiter wächst.
 
 **Vorgeschlagene Sequenz (Rest):**
 
@@ -374,10 +424,14 @@ Risiko **Niedrig** · Fit **Hoch** (passt zum Disziplin-Anspruch).
    sehr geringer Aufwand.~~ ✅ umgesetzt
 2. ~~**C2** Infection (Mutation-Testing mit MSI-Schwelle) — beweist, dass die Regel-Tests
    Mutanten töten; das glaubwürdigste Qualitätssignal für eine Regel-Bibliothek.~~ ✅ umgesetzt
-3. Danach risikoarme Regeln zur Abrundung eines kohärenten „strict"-Regelsets:
-   **A2** (`DisallowErrorSuppressionRule`, `@`) und **A5** (`DisallowEmptyCatchRule`).
-4. **A4** (`switch`) nur bewusst als opt-in (Kontroversität).
-5. **B1-Vollausbau** (`#[StrictRule]`-Attribut + README-Generierung) erst, wenn das
+3. **Positionierung entscheiden (neu, vorrangig)** — Ergebnis von Abschnitt 0.1: bleiben
+   die redundanten Regeln, oder verschiebt sich der Fokus auf Regeln **ohne** Overlap?
+4. Risikoarme Regeln **A2** (`DisallowErrorSuppressionRule`, `@`) und **A5**
+   (`DisallowEmptyCatchRule`) — beide haben in `phpstan-strict-rules` *kein* direktes
+   Äquivalent (zu verifizieren) und brächten damit, anders als die drei bestehenden
+   überlappenden Regeln, echten Zusatznutzen. Gute Kandidaten — aber erst nach Schritt 3.
+5. **A4** (`switch`) nur bewusst als opt-in (Kontroversität).
+6. **B1-Vollausbau** (`#[StrictRule]`-Attribut + README-Generierung) erst, wenn das
    Regelset deutlich wächst und der manuelle Doku-Abgleich spürbar wird.
 
 ---
@@ -391,7 +445,9 @@ Risiko **Niedrig** · Fit **Hoch** (passt zum Disziplin-Anspruch).
 - **Regel-„Level"/Tier-Gruppierung in `rules.neon`** — bei dieser Regelzahl unnötige
   Komplexität.
 - **Typ-bewusste Varianten** der losen-Vergleich-Regeln — der bewusst syntaktische,
-  kompromisslose Ansatz ist das Differenzierungsmerkmal des Pakets.
+  kompromisslose Ansatz bleibt die Design-Linie, ist aber **nicht** (mehr) als
+  Differenzierungsmerkmal gegenüber `phpstan-strict-rules` zu verstehen: dessen `==`- und
+  `empty()`-Verbote überlappen vollständig (siehe Abschnitt 0.1).
 
 ---
 

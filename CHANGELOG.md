@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-beta.2] - 2026-06-26
+
 ### Added
 
 - **`DisallowLooseComparisonRule`** — reports the loose comparison operators `==`,
@@ -17,6 +19,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `== null` — which is deliberately stricter than `phpstan/phpstan-strict-rules`, that
   flags only provably type-unsafe comparisons. Errors use the identifier
   `technoArtisan.looseComparison`.
+
+### Changed
+
+- Overhauled the README: added a "Why this package?" positioning section, status
+  badges, and a before/after example plus identifier for every rule, an "Ignoring a
+  rule" section, and requirements/development notes.
+- Hardened the test suite: a reflection-based guard now enforces that every rule in
+  `src/Rules/` is registered in `rules.neon`, is `final`, and declares
+  `strict_types=1`, so a rule can no longer be shipped unwired and run silently never
+  at consumers.
+
+This release brings the package to four rules: `DisallowEmptyConstructRule`,
+`TypedClassConstantRule`, `DisallowLooseInArrayRule`, and `DisallowLooseComparisonRule`.
 
 ## [0.1.0-beta.1] - 2026-06-25
 
@@ -63,7 +78,8 @@ This release brings the package to three rules: `DisallowEmptyConstructRule`,
   use an explicit strict comparison instead.
 - MIT license.
 
-[Unreleased]: https://github.com/techno-artisan/phpstan-strict-rules/compare/v0.1.0-beta.1...HEAD
+[Unreleased]: https://github.com/techno-artisan/phpstan-strict-rules/compare/v0.1.0-beta.2...HEAD
+[0.1.0-beta.2]: https://github.com/techno-artisan/phpstan-strict-rules/compare/v0.1.0-beta.1...v0.1.0-beta.2
 [0.1.0-beta.1]: https://github.com/techno-artisan/phpstan-strict-rules/compare/v0.1.0-alpha.3...v0.1.0-beta.1
 [0.1.0-alpha.3]: https://github.com/techno-artisan/phpstan-strict-rules/compare/v0.1.0-alpha.2...v0.1.0-alpha.3
 [0.1.0-alpha.2]: https://github.com/techno-artisan/phpstan-strict-rules/compare/v0.1.0-alpha.1...v0.1.0-alpha.2

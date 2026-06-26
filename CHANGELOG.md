@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **CI quality gates** — the build now runs three independent jobs: a `tests` matrix
-  against both the lowest and highest supported PHPStan `^2` release, an Infection
+  against both the lowest and highest supported PHPStan `^2.1` release, an Infection
   mutation-testing job gated at **MSI 100 %** and **covered-MSI 100 %**, and a
   `hygiene` job (`composer validate`, `composer normalize` check, NEON lint).
 - **100 % line-coverage gate** via `bin/coverage-gate.php` and the new
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`composer normalize`** (`ergebnis/composer-normalize`) and a dedicated **NEON lint**
   (`bin/neon-lint.php`, `composer lint:neon`) so a broken config is reported as such
   instead of hiding inside a PHPStan analysis error.
+
+### Changed
+
+- **Raised the minimum `phpstan/phpstan` to `^2.1`** (from `^2`). The test toolchain
+  (PHPUnit 12.5+) requires `nikic/php-parser ^5.7`, which PHPStan `2.0.x` cannot drive
+  in the coverage analysis path; `2.1.0` is the lowest release the CI matrix verifies.
 
 ## [0.1.0-beta.2] - 2026-06-26
 

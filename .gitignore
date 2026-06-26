@@ -4,3 +4,4 @@ composer.lock
 /.phpunit.cache/
 /.idea/
 /github-repo-rules-scanner/
+/coverage.xml

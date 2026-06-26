@@ -43,6 +43,26 @@ final class TypedClassConstantRuleTest extends RuleTestCase
         }
     }
 
+    public function testThrowsWhenClassReflectionIsNull(): void
+    {
+        // PHPStan guarantees getClassReflection() is non-null when a ClassConst rule
+        // fires, so the ShouldNotHappenException branch is never reached in normal
+        // analysis.  This test exercises the defensive guard directly.
+        $scope = $this->createStub(\PHPStan\Analyser\Scope::class);
+        $scope->method('getClassReflection')->willReturn(null);
+
+        $node = new \PhpParser\Node\Stmt\ClassConst(
+            [new \PhpParser\Node\Const_('FOO', new \PhpParser\Node\Scalar\Int_(1))],
+            0,
+            [],
+            [],
+            null,
+        );
+
+        $this->expectException(\PHPStan\ShouldNotHappenException::class);
+        $this->getRule()->processNode($node, $scope);
+    }
+
     private function message(string $class, string $constant): string
     {
         return sprintf('Class constant %s\\%s::%s must declare a native type.', self::NS, $class, $constant);

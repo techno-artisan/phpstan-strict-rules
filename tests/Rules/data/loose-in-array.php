@@ -46,4 +46,9 @@ function flagged(mixed $x, array $list, array $arr, Haystack $haystack, bool $fl
     $callable = in_array(...);           // first-class callable, not a real call
     in_array(...$args);                  // argument unpacking, positions unknown
     $haystack->in_array($x);             // method named in_array, not the function
+
+    // --- early-return coverage paths ---
+    strlen((string) $x);  // non-monitored function: name not in STRICT_REQUIRED_FROM, no error
+    $fn = 'strlen';
+    $fn($x);              // variable function name: name not instanceof Name, no error
 }

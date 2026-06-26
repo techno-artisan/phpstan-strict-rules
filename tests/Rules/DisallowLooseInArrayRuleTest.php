@@ -47,6 +47,23 @@ final class DisallowLooseInArrayRuleTest extends RuleTestCase
         }
     }
 
+    public function testFirstClassCallableIsNotReported(): void
+    {
+        // PHPStan 2.x does not dispatch FuncCall rules for first-class callables at
+        // the framework level, so the isFirstClassCallable() guard in processNode()
+        // is never reached via analyse().  This test constructs the node directly
+        // so the branch is exercised: a FCC must produce zero errors.
+        $fcc = new \PhpParser\Node\Expr\FuncCall(
+            new \PhpParser\Node\Name('in_array'),
+            [new \PhpParser\Node\VariadicPlaceholder()],
+        );
+
+        /** @var \PHPStan\Analyser\Scope $scope */
+        $scope = $this->createStub(\PHPStan\Analyser\Scope::class);
+
+        self::assertSame([], $this->getRule()->processNode($fcc, $scope));
+    }
+
     private static function message(string $function): string
     {
         return sprintf(

@@ -35,6 +35,8 @@ function flagged(mixed $x, array $list, array $arr, Haystack $haystack, bool $fl
     array_keys($arr, $x);                // search value present, strict missing
     array_keys($arr, filter_value: $x);  // search value present (named), strict missing
     \in_array($x, $list);                // fully-qualified call, strict missing
+    IN_ARRAY($x, $list);                 // uppercase name: strtolower() is load-bearing
+    in_array(needle: $x, haystack: $list); // named needle/haystack, no strict arg
 
     // --- negative cases: must NOT be reported ---
     in_array($x, $list, true);           // strict true

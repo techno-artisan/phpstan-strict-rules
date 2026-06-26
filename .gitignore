@@ -5,3 +5,5 @@ composer.lock
 /.idea/
 /github-repo-rules-scanner/
 /coverage.xml
+/infection.log
+/.infection/
